@@ -1,0 +1,21 @@
+{
+
+# This is the settings file of bgcython module. Set the paths
+# using forward slashes and always between the quotes.
+
+# gcc (or MinGW in Windows) binary folder path. Ex: 'C:/MinGW/bin'
+# You may keep empty if gcc is in your system path
+# (ex: can run gcc in command line)
+'path_gcc' : '',
+
+# Python include folder for compiler use
+# bgcython already provides python35 and python36 include
+# Keep empty to use default include provided
+'py_include' : '',
+
+# Python libs folder for compiler use
+# bgcython already provides python35 and python36 libs
+# Keep empty to use default libs provided
+'py_libs' : ''
+
+}
