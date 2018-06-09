@@ -107,18 +107,18 @@ def main(cont):
 						path_sitepkg.as_posix() + '/bgcython/'
 						)
 						
-					# Copy settings_bgcython.txt package folder
-					print('Copying settings_bgcython.txt package folder')
+					# Copy settings.txt to package folder
+					print('Copying settings.txt package folder')
 					
 					shutil.copyfile(
-						path_bgcython.as_posix() + '/settings_bgcython.txt',
-						path_sitepkg.as_posix() + '/bgcython/settings_bgcython.txt'
+						path_bgcython.as_posix() + '/settings.txt',
+						path_sitepkg.as_posix() + '/bgcython/settings.txt'
 						)
 						
 					print('bgcython successfully installed\n')
 					
 					# Open settings file for editing
-					os.startfile(path_sitepkg.as_posix() + '/bgcython/settings_bgcython.txt')
+					os.startfile(path_sitepkg.as_posix() + '/bgcython/settings.txt')
 					
 			print('Installation successfully ended')
 					

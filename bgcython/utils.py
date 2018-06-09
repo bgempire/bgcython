@@ -16,7 +16,7 @@ def load_settings():
 	_settings = {}
 	
 	# Load settings from file in Blender executable folder
-	with open(cur_path.as_posix() + '/settings_bgcython.txt', 'r') as opened_file:
+	with open(cur_path.as_posix() + '/settings.txt', 'r') as opened_file:
 		_settings = literal_eval(opened_file.read())
 
 	# Get gcc from path if no path is provided
