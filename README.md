@@ -15,7 +15,7 @@ files into Blender's Python library.
 new packages from inside Blender.
 
 After the installation, a settings text file called **settings_bgcython.txt** will/may run, and you can fill some 
-fields with some custom paths.
+fields with some custom paths if you want.
 
 ### Windows ###
 Now, you must get the [GCC](https://gcc.gnu.org/) compiler. In case you're using Windows, download and install 
@@ -52,8 +52,23 @@ To use BGCython, all you need to do is call inside a initialization script (pref
 
 `bgcython.bgcythonize(current_path)`
 
-With `current_path` being the path you want the module to look for .pyx scripts. It will look recursively on all folders on the
-given path, and create a **.timestamps.txt** file on this path. After this first run, everytime you modify your .pyx files and
-run BGE, BGCython will rebuild the extensions.
+The recommended standard is a `__init__.py` on the top level of your scripts folder with the following code:
+```
+release = False
 
-The .pyx files and **.timestamps.txt** can be discarded on your release, you only the compiled extensions.
+if not release:
+	
+	from bge.logic import expandPath
+	from pathlib import Path
+	from bgcython import bgcythonize
+	
+	current_path = Path(expandPath('//')).resolve()
+	
+	bgcythonize(current_path)
+```
+
+With `current_path` being the path you want the module to look for .pyx scripts. It will look recursively on all folders on the
+given path, and create a **timestamps.txt** file on this path. After this first run, everytime you modify your .pyx files and
+run BGE, BGCython will rebuild the extensions. See the demos on this repository for further advice.
+
+The .pyx files and **timestamps.txt** can be discarded on your release, you only need the compiled extensions.
