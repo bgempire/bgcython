@@ -1,35 +1,36 @@
-import bge
-import bgcython
-
-from ast import literal_eval
-from pathlib import Path
-
-current_path = Path(bge.logic.expandPath('//')).resolve()
-
-bgcython.bgcythonize(current_path)
-
 def main(cont):
-
-	try:
-		from .mod import benchmark_mod
-
-	except:
-		print('Cant import extension mod')
 	
 	own = cont.owner
 	
 	sensor = cont.sensors[0]
 	
 	lst = []
-	benchmark = literal_eval(own['benchmark'])
+	benchmark = int(own['benchmark'])
 	
 	if sensor.positive:
 		
-		if 'benchmark_mod' in dir() and own['use_mod']:
-			print('Running benchmark_mod')
+		# Allowed to use mod
+		if own['use_mod']:
+			
+			# Import mod if not already imported
+			if not 'benchmark_mod' in dir(): 
+				
+				try:
+					from .mod import benchmark_mod
+
+				except:
+					print('Cant import extension mod function')
+					
+			print('Running function benchmark_mod')
 			benchmark_mod(cont)
 			
-		else:
+		# Not allowed to use mod
+		elif not own['use_mod']:
+			
+			# Delete mod if it is imported
+			if 'benchmark_mod' in dir():
+				del benchmark_mod
+				
 			benchmark_script(cont)
 
 def benchmark_script(cont):
@@ -39,11 +40,11 @@ def benchmark_script(cont):
 	sensor = cont.sensors[0]
 	
 	lst = []
-	benchmark = literal_eval(own['benchmark'])
+	benchmark = int(own['benchmark'])
 	
 	if sensor.positive:
 		
-		print('Running benchmark_script')
+		print('Running function benchmark_script')
 		
 		own.applyRotation([0, 0, 0.02], True)
 		
