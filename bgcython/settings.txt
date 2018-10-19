@@ -9,12 +9,12 @@
 'path_gcc' : '',
 
 # Python include folder for compiler use
-# bgcython already provides python35 and python36 include
+# bgcython already provides some latest python3x includes
 # Keep empty to use default include provided
 'py_include' : '',
 
 # Python libs folder for compiler use
-# bgcython already provides python35 and python36 libs
+# bgcython already provides some latest python3x libs
 # Keep empty to use default libs provided
 'py_libs' : ''
 

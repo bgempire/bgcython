@@ -13,6 +13,8 @@ cur_path = Path(__file__).parent.resolve()
 
 def load_settings():
 	
+	""" Loads bgcython settings for later use, like gcc path, Python includes and libs. """
+	
 	_settings = {}
 	
 	# Load settings from file in Blender executable folder
@@ -41,25 +43,31 @@ def load_settings():
 	
 def gen_timestamps(target_path):
 	
+	""" Get and generates timestamps file on given path.
+	
+	This function is used by load_timestamps.  """
+	
 	# Paths
 	target_path = Path(target_path).resolve()
-	timestamps_path = Path(target_path.as_posix() + '/.timestamps.txt')
+	timestamps_path = Path(target_path.as_posix() + '/timestamps.txt')
 	
 	# Main data
 	timestamps = {}
 	
 	# Other
 	pyx_files_exist = False
+	first_time_build = False
 	
 	# Get directory of target_path, if not already is one
 	if not target_path.is_dir():
 		target_path = target_path.parent
 		
-	# Create .timestamps.txt at target_path, if not already exists
+	# Create timestamps.txt at target_path, if not already exists
 	if not timestamps_path.exists():
-		print('.timestamps.txt doesnt exist, creating it')
+		print('timestamps.txt doesnt exist, creating it')
 		timestamps_path.touch()
 		timestamps_path = timestamps_path.resolve()
+		first_time_build = True
 		
 	# Iterates over all files in target_path recursively
 	for _path, _folders, _files in os.walk(target_path.as_posix()):
@@ -81,28 +89,29 @@ def gen_timestamps(target_path):
 				# Assign key_name to file modification time value
 				timestamps[key_name] = os.path.getmtime(_file_path.as_posix())
 	
-	# Save .timestamps.txt if any .pyx file was found
+	# Save timestamps.txt if any .pyx file was found
 	if pyx_files_exist:
 		
 		with open(timestamps_path.as_posix(), 'w') as opened_file:
 			
 			opened_file.write(pformat(timestamps))
-			print('.pyx files timestamps updated to .timestamps.txt')
+			print('.pyx files timestamps updated to timestamps.txt')
 			
 	# Warn that no .pyx files were found
 	if not pyx_files_exist:
 		print('No .pyx files in given path:\n' + target_path.as_posix())
 		
 	# Timestamps were saved to file, but can be retrieved as function return
-	return(timestamps)
+	return([timestamps], first_time_build)
 
 def load_timestamps(target_path):
 	
 	# Paths
 	target_path = Path(target_path).resolve()
-	timestamps_path = Path(target_path.as_posix() + '/.timestamps.txt')
+	timestamps_path = Path(target_path.as_posix() + '/timestamps.txt')
 	
 	# Main data
+	first_time_build = False
 	timestamps = {}
 	timestamps_mod = []
 	
@@ -110,34 +119,39 @@ def load_timestamps(target_path):
 	if not target_path.is_dir():
 		target_path = target_path.parent
 		
-	# Generate .timestamps.txt at target_path, if not already exists
+	# Generate timestamps.txt at target_path, if not already exists
 	if not timestamps_path.exists():
-		gen_timestamps(target_path)
+		first_time_build = gen_timestamps(target_path)[1]
 		
-	# Load .timestamps.txt if they exist
+	# Load timestamps.txt if they exist
 	if timestamps_path.exists():
 		
 		with open(timestamps_path.as_posix(), 'r') as opened_file:
 			timestamps = literal_eval(opened_file.read())
 		
-		for _path, _folders, _files in os.walk(target_path.as_posix()):
+		if not first_time_build:
 			
-			for _file in _files:
-				if _file.endswith('.pyx'):
-					
-					pyx_files_exist = True
-					
-					_file_path = Path(_path + '/' + _file).resolve()
-					
-					key_name = Path(_path).resolve().as_posix().replace(target_path.as_posix(), '') + '/' + _file
-					
-					if key_name in timestamps.keys():
+			for _path, _folders, _files in os.walk(target_path.as_posix()):
+				
+				for _file in _files:
+					if _file.endswith('.pyx'):
 						
-						if os.path.getmtime(_file_path.as_posix()) == timestamps[key_name]:
-							print('No modifications on:', key_name, '\n')
+						pyx_files_exist = True
+						
+						_file_path = Path(_path + '/' + _file).resolve()
+						
+						key_name = Path(_path).resolve().as_posix().replace(target_path.as_posix(), '') + '/' + _file
+						
+						if key_name in timestamps.keys():
 							
-						else:
-							print('Modified, must recompile:', key_name, '\n')
-							timestamps_mod.append(key_name)
+							if os.path.getmtime(_file_path.as_posix()) == timestamps[key_name]:
+								print('No modifications on:', key_name, '\n')
+								
+							else:
+								print('Modified, must recompile:', key_name, '\n')
+								timestamps_mod.append(key_name)
 							
-	return(timestamps_mod)
+			return(timestamps_mod)
+			
+		if first_time_build:
+			return(timestamps)
