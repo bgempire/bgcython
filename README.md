@@ -83,7 +83,7 @@ if not release:
 ```
 
 With `current_path` being the path you want the module to look for `.pyx` scripts. 
-It will look recursively on all folders on thegiven path, and create a `timestamps.txt` 
+It will look recursively on all folders on the given path, and create a `timestamps.txt` 
 file on this path. After this first run, everytime you modify your `.pyx` files and
 run BGE, BGCython will rebuild the extensions. See the demos on this repository for 
 further advice.
